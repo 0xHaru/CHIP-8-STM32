@@ -1,0 +1,168 @@
+\documentclass[a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e} %,noend
+
+
+% ===== Graph =====
+\usepackage{tikz}
+% ===== Multicol =====
+\usepackage{blindtext}
+\usepackage{multicol}
+% ===== Cancel =====
+\usepackage{cancel}
+% ===== Code =====
+\usepackage{listings} 
+\lstdefinestyle{mystyle}{
+    breakatwhitespace=false,                   
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=False,                  
+    tabsize=2
+}
+
+\usepackage{hyperref}
+
+\textwidth=450pt
+\oddsidemargin=0pt
+\textheight=665pt
+\voffset=-50pt
+
+\lstset{style=mystyle}
+
+\usepackage{setspace}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+
+\singlespacing
+% ===================
+\mathtoolsset{showonlyrefs}  
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=black,
+}
+
+\AtBeginDocument{\renewcommand\proofname{Proof}}
+
+\newcommand{\pluseq}{\mathrel{{+}{=}}}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newtheorem{definition}{Definition}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% \title{Statistical Methods for Maching Learning}
+% \author{Federico Bruzzone \\ Andrea Longoni \\ Luca Bellani}
+% \date{}
+
+% \makeindex
+\begin{document}
+
+% \maketitle
+
+
+\begin{titlepage}
+    \begin{center}
+        % \includegraphics[height=2.6cm]{minerva.pdf} %{Unilogo.png}
+        \includegraphics[height=5cm]{minerva.pdf} %{Unilogo.png}
+
+        \vspace*{1.75cm}
+
+        \LARGE
+        % \text{University of Milan}
+
+        % \vspace*{1cm}
+
+        \textbf{MSc in Computer Science} \\
+        at University of Milan
+
+        \vspace*{1cm}
+
+        
+        \huge
+        CHIP-8 ...
+
+        \large Proposta per il Progetto di PROS, \\
+               corso tenuto da \textbf{Danilo Bruschi}
+        
+
+        \normalsize
+        \vspace*{4cm}
+
+        \begin{minipage}[t]{0.47\textwidth}
+	       {Email: } \vspace{0.3em} \\
+              {\large \href{federico.bruzzone@studenti.unimi.it}{federico.bruzzone@studenti.unimi.it}} \vspace{1em}  \\
+              {\large \href{andrea.longoni3@studenti.unimi.it}{andrea.longoni3@studenti.unimi.it}} \vspace{1em}  \\
+              {\large \href{lorenzo.ferrante1@studenti.unimi.it}{lorenzo.ferrante1@studenti.unimi.it}} \vspace{1em}  \\
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.47\textwidth}\raggedleft
+	       {Creato da:} \hspace{-0.9em} \vspace{0.3em} \\
+              {\large \textbf{Federico Bruzzone}} \\
+              \vspace{1em}
+              {\large \textbf{Andrea Longoni}} \\
+              \vspace{1em}
+              {\large \textbf{Lorenzo Ferrante}} % \\
+              % {\footnotesize mat. 123456}
+        \end{minipage}
+
+        \vfill
+        Anno accademico 2022/2023
+            
+    \end{center}
+\end{titlepage}
+
+% \clearpage\null\newpage
+
+% \setlength{\parskip}{0.15em}
+% \tableofcontents
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+
+
+% \clearpage\null\newpage
+
+
+\section{Introduzione}
+
+CHIP-8 é un linguaggio di programmazione interpretato, sviluppato da Joseph Weisbecker. Inizialmente è stato utilizzato sui microcomputer a 8 bit a metà degli anni '70. I programmi CHIP-8 vengono eseguiti su una macchina virtuale CHIP-8. È stato creato per consentire la programmazione più semplice dei videogiochi per questi computer. La semplicità di CHIP-8, la sua lunga storia e popolarità, hanno assicurato che gli emulatori e i programmi CHIP-8 siano ancora in fase di sviluppo.
+
+Il CHIP-8 nel corso degli anni é stato esteso molte volte, tra le piú importanti possiamo citare, super-CHIP-8 (SCHIP-8) e la piú recente XO-CHIP.  
+
+Lo scopo del progetto é costruire un emulatore CHIP-8 in grado di eseguire tutti i giochi e i programmi scritti nel linguaggio originale e queste estensioni. 
+
+
+\section{Componenti Hardware}
+
+Il componente principale del nostro progetto é un microcontrollore basato su architettura ARM Cortex-M4 72 \texttt{MHz} con 64-\texttt{KB} di Flash e 16-\texttt{KB} di SRAM, il  modello esatto é \texttt{STM32F334R8T6} 64 pins. Utilizziamo questa scheda perché le ROM dei giochi CHIP-8 e SCHIP-8 necessitano di una dimensione massima di 4-\texttt{KB} di SRAM. La scheda usata durante il corso basata su architettura ARM Cortex-M0 32 \texttt{MHz} \texttt{STM32L053} ha solo 8-\texttt{KB} di SRAM, quindi non sarebbe stata sufficiente per il nostro progetto, perché in SRAM dovrá girare una Virtual Machine. 
+
+Ovviamente, necessiteremo di un display TFT LCD (thin-film-transistor liquid-crystal display) a colori retroilluminato, per visualizzare il gioco. Questo display é basato sul controller \texttt{ILI9341} e avente 2.4 pollici e ha una risoluzione di 320$\times$240 \texttt{px}. Il display dispone di un lettore di schede microSD, che utilizzeremo per caricare i giochi dal calcolatore alla scheda.
+
+Per interagire con il gioco, utilizzeremo una tastiera matriciale 4x4, in cui ogni tasto corrisponde ad un tasto della tastiera originale. La tastiera è adatta per l'uso sia con i controller da 3,3V che 5V e le dimensioni sono 69 \texttt{mm} $\times$ 77 \texttt{mm} $\times$ 1 \texttt{mm}.  
+
+Per sentire gli effetti sonori generati dal gioco, utilizzeremo un bipper che riproduce suoni a frequenza fissata. Utilizzeremo quello fornito dal kit di sviluppo.
+
+In aggiunta, sará possibile aggiungere uno slot per l'alimentazione via due batterie \texttt{AAA}.
+
+\section{Componenti Software}
+
+
+
+\end{document}
