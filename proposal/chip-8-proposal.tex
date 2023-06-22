@@ -44,6 +44,7 @@
 \usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{bm}
+\usepackage{setspace}
 
 \singlespacing
 % ===================
@@ -135,6 +136,8 @@
 % \tableofcontents
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0.8em}
+\linespread{1.5}
+% \setstretch{1.25}
 
 
 % \clearpage\null\newpage
@@ -155,14 +158,67 @@ Il componente principale del nostro progetto é un microcontrollore basato su ar
 
 Ovviamente, necessiteremo di un display TFT LCD (thin-film-transistor liquid-crystal display) a colori retroilluminato, per visualizzare il gioco. Questo display é basato sul controller \texttt{ILI9341} e avente 2.4 pollici e ha una risoluzione di 320$\times$240 \texttt{px}. Il display dispone di un lettore di schede microSD, che utilizzeremo per caricare i giochi dal calcolatore alla scheda.
 
-Per interagire con il gioco, utilizzeremo una tastiera matriciale 4x4, in cui ogni tasto corrisponde ad un tasto della tastiera originale. La tastiera è adatta per l'uso sia con i controller da 3,3V che 5V e le dimensioni sono 69 \texttt{mm} $\times$ 77 \texttt{mm} $\times$ 1 \texttt{mm}.  
+Per interagire con il gioco, utilizzeremo una tastiera matriciale 4$\times$4, in cui ogni tasto corrisponde ad un tasto della tastiera originale. La tastiera è adatta per l'uso sia con i controller da 3,3\texttt{V} che 5\texttt{V} e le dimensioni sono 69 \texttt{mm} $\times$ 77 \texttt{mm} $\times$ 1 \texttt{mm}.  
 
-Per sentire gli effetti sonori generati dal gioco, utilizzeremo un bipper che riproduce suoni a frequenza fissata. Utilizzeremo quello fornito dal kit di sviluppo.
+Per sentire gli effetti sonori generati dal gioco, utilizzeremo un bipper che riproduce suoni a frequenza variabile. Utilizzeremo quello fornito dal kit di sviluppo.
 
 In aggiunta, sará possibile aggiungere uno slot per l'alimentazione via due batterie \texttt{AAA}.
 
 \section{Componenti Software}
 
-Hello
+Le parti software che implementeremo sono:
+
+\begin{enumerate}
+    \item La \textbf{Virtual Machine} (VM) esegue i programmi scritti in CHIP-8 e SCHIP-8. Inizialmente, il testing della VM verrà effettuato su utilizzando una libreria C tra \texttt{SDL2} o \texttt{Raylib} su un calcolatore \textrm{x}86 a 64 \texttt{bit}. Successivamente, verrà portata sul microcontrollore ARM Cortex-M.
+    \item Il \textbf{Driver Video} che permette l'interfacciamento tra il microcontrollore e il display TFT LCD. Lo schermo supporta interfacce parallele 6800/8080 a 8 \texttt{bit} e SPI a 3/4 fili, per ragioni di prestazioni noi implementeremo il driver utilizzando l'interfaccia parallela a 8 \texttt{bit}.  
+    \item Il \textbf{Driver microSD} che permette l'interfacciamento tra il microcontrollore e il lettore della scheda microSD, verrá fatto utilizzando l'interfaccia SPI. Per questo driver utilizzeremo le librerie fornite da ST per la gestione del filesystem \texttt{FAT32} e facilitare lo sviluppo del trasferimento dei dati. 
+    \item Il \textbf{Driver Keypad} che permette l'interfacciamento tra il microcontrollore e la tastiera matriciale 4$\times$4. La gestione degli input da tastiera non verrà effettuata in polling, ma bens\'{i} tramite interrupt.
+    \item Il \textbf{Driver Sound} che permette l'interfacciamento tra il microcontrollore e il bipper. Il driver permette di generare suoni a frequenza variabile.
+\end{enumerate}
+
+Come ultima parte software, implementeremo un men\'{u} all'avvio dell'emulatore per la selezione del gioco da eseguire. Abbiamo deciso di non usare libereie esterne ma di implementare direttamente una libreria per fare il randering del font e scrivere sul framebuffer.  
+
+\section{Analisi Tempi e Costi}
+
+\begin{center}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|llll|l|}
+        \hline
+        \multicolumn{1}{|l|}{\textbf{Nome}}          & \multicolumn{1}{l|}{\textbf{Modello}}         & \multicolumn{1}{l|}{\textbf{Costo unitario}}  & \textbf{Unità}  & \textbf{Costo} \\ \hline
+        \multicolumn{1}{|l|}{Schermo}                & \multicolumn{1}{l|}{ILI9341 2.4"}             & \multicolumn{1}{l|}{6.44}                     & 1               & 6.44          \\ \hline
+        \multicolumn{1}{|l|}{Matrix Array Keypad}    & \multicolumn{1}{l|}{AZ-Delivery 4$\times$4}   & \multicolumn{1}{l|}{3.99}                     & 1               & 3.99          \\ \hline
+        \multicolumn{1}{|l|}{Microcontrollore} & \multicolumn{1}{l|}{STM32 F334R8T6}    & \multicolumn{1}{l|}{14.98}                     & 1              & 14.98          \\ \hline
+        \multicolumn{1}{|l|}{Breadboard - Beeper}     & \multicolumn{1}{l|}{ELEGOO Electronic Kit}       & \multicolumn{1}{l|}{15.99}                     & 1              & 15.99          \\ \hline
+        \multicolumn{4}{|r|}{\textbf{Totale}}                                                                                                            & 41.40€         \\ \hline
+    \end{tabular}
+    \caption{
+        Materiali previsti per la costruzione del progetto. I costi indicati
+        provengono da negozi online come Amazon, eBay e Aliexpress
+    }
+\end{table}
+\end{center}
+
+\begin{center}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Nome}                         & \textbf{Tempo di lavoro}  \\ \hline
+        Virtual Machine                       & 3 settimane     \\ \hline
+        Driver Video                          & 1 settimana     \\ \hline
+        Driver microSD                        & 3 giorni        \\ \hline
+        Driver Keypad                         & 1 giorno        \\ \hline
+        Driver Audio                          & 5 giorni        \\ \hline
+        Men\'{u} Game Selection               & 5 giorni        \\ \hline
+        Software Optimization                 & 2 settimane     \\ \hline
+        \multicolumn{1}{|r|}{\textbf{Totale}} & $\min$ 2 mesi   \\ \hline
+    \end{tabular}
+    \caption{
+        Tempi di realizzazione previsti per la realizzazione dei componenti software
+    }
+\end{table}
+
+\end{center}
 
 \end{document}
