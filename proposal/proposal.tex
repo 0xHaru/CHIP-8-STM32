@@ -14,6 +14,12 @@
     filecolor=black,
     urlcolor=black,
 }
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{bm}
+
+
 
 \textwidth=450pt
 \oddsidemargin=0pt
@@ -80,6 +86,18 @@ La semplicità dell'interprete in aggiunta alla sua lunga storia e popolarità h
 
 Lo scopo del progetto é quello di costruire un emulatore CHIP-8 e S-CHIP in grado di funzionare su un microcontrollore STM32.
 
+\section{Analisi di mercato}
+
+Ad oggi esiste solo una specifica per la virtual machine di chip8 ed esistono numerose implementazioni di quest'ultima per quasi tutte le piattaforme, nonché alcuni strumenti di sviluppo.
+I giochi sono ancora sviluppati per CHIP-8 oggi, oltre ai vecchi giochi che riaffiorano online negli archivi digitali.
+Sebbene CHIP-8 e SCHIP siano stati comunemente implementati come emulatori, esiste anche un'implementazione hardware pura (scritta nel linguaggio Verilog) per alcune schede FPGA.
+Attualmente è difficile ottenere la cifra esatta di utenti di chip8,
+il topic "chip8" su github ha 750+ repository in piu di 10 linguaggi diversi
+tra questi il piu popolare con 600 stelle è Octo, un ide e vm (base, super, xo) online scritta in js, scritta dal inventore del estensione OXchip la quale nel 2014 ha riportato in vita chip8 ammodernadolo un po e aggiungendo nuove features 
+un altra cosa che si puo citare è la octojam, che quest'anno sara alla decima edizione , una game jam basata su chip8 con piu di 25 entry ad anno
+le piattaforme che lo implementano sono illimitate, siccome è una specifica con molte poche richieste harware e con un instructionset molto piccolo
+uno lo ha implementato per girare su gameboy color, calcolatrici hp48, ti48, emacs
+
 \section{Componenti Hardware}
 
 % 4 Kb per ROM + 4 Kb per VM
@@ -96,7 +114,7 @@ Per interagire con l'emulatore utilizzeremo una tastiera matriciale 4$\times$4 c
 
 Per riprodurre gli effetti sonori generati dal gioco utilizzeremo un beeper a frequenza variabile. In CHIP-8 e S-CHIP vi é un solo tipo di suono che può essere riprodotto durante tutta l'esecuzione del gioco.
 
-Infine sarà possibile aggiungere uno slot per l'alimentazione tramite due batterie \texttt{AAA}.
+Infine sarà possibile aggiungere uno slot per l'alimentazione tramite due batterie \texttt{AA}.
 
 \section{Componenti Software}
 
@@ -112,16 +130,32 @@ Le parti software che saranno implementate sono:
 
 Inoltre verrà implementato un menù per la selezione del gioco all'avvio dell'emulatore. Infine abbiamo deciso di non usare librerie esterne ma di sviluppare una nostra libreria per effettuare il rendering del font e disegnare sul display.
 
+\section{Architettura Software}
+
+\section{Analisi del Consumo Energetico}
+
+Come abbiamo gi\'a accennato in precedenza, il microcontrollore lo alimentermo durante lo sviluppo via USB e successivamente utilizzando batterie \texttt{AA}. Le batterie \texttt{AA} hanno una tensione di 3\texttt{V} e una capacit\'a di $\sim$2500 \texttt{mA}, usandone due in serie otteniamo 5000 \texttt{mA}. 
+Stimando un consumo dello schermo di 100 \texttt{mAh} e un consumo medio di 25 \texttt{mAh} per il microcontrollore e le periferiche, per un totale di 125 \texttt{mAh}, sapendo che:
+\begin{equation*}
+    \begin{aligned}
+        \textmd{time} \ (\texttt{h}) & = \frac{\textmd{capacity} \ (\texttt{mA})}{\textmd{consumption} \ (\texttt{mAh})}\\
+                                     & = \frac{2 * 2500 \ \texttt{mA}}{125 \ \texttt{mAh}}\\ 
+                                     & = 40 \ \texttt{h}
+    \end{aligned}
+\end{equation*}
+
+Possiamo stimare una durata di 40 ore di gioco.
+
 \section{Analisi di Tempi e Costi}
 
 \begin{center}
-	\begin{table}[h]
+	\begin{table}[ht]
 		\centering
 		\begin{tabular}{|llll|l|}
 			\hline
-			\multicolumn{1}{|l|}{\textbf{Nome}}          & \multicolumn{1}{l|}{\textbf{Modello}}       & \multicolumn{1}{l|}{\textbf{Costo unitario}} & \textbf{Unità} & \textbf{Costo} \\ \hline
+			\multicolumn{1}{|l|}{\textbf{Nome}}                   & \multicolumn{1}{l|}{\textbf{Modello}}       & \multicolumn{1}{l|}{\textbf{Costo unitario}} & \textbf{Unità} & \textbf{Costo} \\ \hline
 			\multicolumn{1}{|l|}{Schermo}                & \multicolumn{1}{l|}{ILI9341 2.4"}           & \multicolumn{1}{l|}{6.44}                    & 1               & 6.50           \\ \hline
-			\multicolumn{1}{|l|}{Matrix keypad}          & \multicolumn{1}{l|}{AZ-Delivery 4$\times$4} & \multicolumn{1}{l|}{3.99}                    & 1               & 3.99           \\ \hline
+			\multicolumn{1}{|l|}{Matrix keypad}          & \multicolumn{1}{l|}{AZ-Delivery 4$\times$4}        & \multicolumn{1}{l|}{3.99}                    & 1               & 3.99           \\ \hline
 			\multicolumn{1}{|l|}{Microcontrollore}       & \multicolumn{1}{l|}{STM32 F334R8T6}         & \multicolumn{1}{l|}{14.99}                   & 1               & 14.99          \\ \hline
 			\multicolumn{1}{|l|}{Beeper}                 & \multicolumn{1}{l|}{}                       & \multicolumn{1}{l|}{0.99}                    & 1               & 0.99           \\ \hline
 			\multicolumn{1}{|l|}{Breadboard e cablaggio} & \multicolumn{1}{l|}{}                       & \multicolumn{1}{l|}{4.99}                    & 1               & 4.99           \\ \hline
@@ -135,7 +169,7 @@ Inoltre verrà implementato un menù per la selezione del gioco all'avvio dell'e
 \end{center}
 
 \begin{center}
-	\begin{table}[h]
+	\begin{table}[ht]
 		\centering
 		\begin{tabular}{|l|l|}
 			\hline
