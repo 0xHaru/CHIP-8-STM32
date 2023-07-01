@@ -86,17 +86,17 @@ La semplicità dell'interprete in aggiunta alla sua lunga storia e popolarità h
 
 Lo scopo del progetto é quello di costruire un emulatore CHIP-8 e S-CHIP in grado di funzionare su un microcontrollore STM32.
 
-\section{Analisi di mercato}
+\section{Analisi di Mercato}
 
-Ad oggi esiste solo una specifica per la virtual machine di chip8 ed esistono numerose implementazioni di quest'ultima per quasi tutte le piattaforme, nonché alcuni strumenti di sviluppo.
-I giochi sono ancora sviluppati per CHIP-8 oggi, oltre ai vecchi giochi che riaffiorano online negli archivi digitali.
-Sebbene CHIP-8 e SCHIP siano stati comunemente implementati come emulatori, esiste anche un'implementazione hardware pura (scritta nel linguaggio Verilog) per alcune schede FPGA.
-Attualmente è difficile ottenere la cifra esatta di utenti di chip8,
-il topic "chip8" su github ha 750+ repository in piu di 10 linguaggi diversi
-tra questi il piu popolare con 600 stelle è Octo, un ide e vm (base, super, xo) online scritta in js, scritta dal inventore del estensione OXchip la quale nel 2014 ha riportato in vita chip8 ammodernadolo un po e aggiungendo nuove features 
-un altra cosa che si puo citare è la octojam, che quest'anno sara alla decima edizione , una game jam basata su chip8 con piu di 25 entry ad anno
-le piattaforme che lo implementano sono illimitate, siccome è una specifica con molte poche richieste harware e con un instructionset molto piccolo
-uno lo ha implementato per girare su gameboy color, calcolatrici hp48, ti48, emacs
+Al giorno d'oggi risulta difficile ottenere un numero esatto di utenti, ma possiamo basarci sul topic "chip8" di GitHub che raggruppa quasi un migliaio di repository.
+
+Tra queste la più popolare è Octo, un'implementazione scritta in JavaScript capace di eseguire la versione base di CHIP-8, S-CHIP e XO-CHIP nel browser. La repository è mantenuta da John Earnest, l'inventore di XO-CHIP che nel 2014 ha riportato in vita CHIP-8 modernizzandolo e aggiungendo nuove funzionalità.
+
+Inoltre ogni anno viene organizzata la Octojam, una game jam dove ogni partecipante prova a sviluppare un videogioco per CHIP-8 (o per le sue estensioni) partendo da zero.
+
+Grazie al suo instruction set ridotto e alla sua limitata richiesta di risorse hardware è stato portato su un elevato numero di piattaforme, tra cui il Game Boy Color, calcolatrici grafiche serie HP 48 e Emacs (il famoso editor di testo).
+
+Sebbene CHIP-8 e S-CHIP siano stati tradizionalmente implementati tramite software esistono anche implementazioni hardware. Ne citiamo una in particolare scritta nel linguaggio Verilog per schede FPGA.
 
 \section{Componenti Hardware}
 
@@ -134,12 +134,14 @@ Inoltre verrà implementato un menù per la selezione del gioco all'avvio dell'e
 
 \section{Analisi del Consumo Energetico}
 
-Come abbiamo gi\'a accennato in precedenza, il microcontrollore lo alimentermo durante lo sviluppo via USB e successivamente utilizzando batterie \texttt{AA}. Le batterie \texttt{AA} hanno una tensione di 3\texttt{V} e una capacit\'a di $\sim$2500 \texttt{mA}, usandone due in serie otteniamo 5000 \texttt{mA}. 
-Stimando un consumo dello schermo di 100 \texttt{mAh} e un consumo medio di 25 \texttt{mAh} per il microcontrollore e le periferiche, per un totale di 125 \texttt{mAh}, sapendo che:
+Come abbiamo gi\'a accennato in precedenza il microcontrollore durante lo sviluppo verrà alimentato tramite USB e successivamente utilizzando batterie \texttt{AA}. Le batterie hanno una tensione di 3\texttt{V} e una capacit\'a di $\sim$2500 \texttt{mA} e usandone due in serie otterremo 5000 \texttt{mA}.
+
+Stimando un consumo dello schermo di 100 \texttt{mAh} e un consumo di 25 \texttt{mAh} per il microcontrollore e le sue periferiche, avremo un consumo totale di 125 \texttt{mAh}.
+
 \begin{equation*}
     \begin{aligned}
         \textmd{time} \ (\texttt{h}) & = \frac{\textmd{capacity} \ (\texttt{mA})}{\textmd{consumption} \ (\texttt{mAh})}\\
-                                     & = \frac{2 * 2500 \ \texttt{mA}}{125 \ \texttt{mAh}}\\ 
+                                     & = \frac{2 * 2500 \ \texttt{mA}}{125 \ \texttt{mAh}}\\
                                      & = 40 \ \texttt{h}
     \end{aligned}
 \end{equation*}
