@@ -7,6 +7,7 @@
 \usepackage{setspace}
 \usepackage{tikz}
 \usepackage{pgf-umlcd}
+\usepackage{pgf-umlsd}
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=true,
@@ -112,9 +113,7 @@ Il display dispone di un lettore di schede microSD, che verrà utilizzato per ca
 
 Per interagire con l'emulatore utilizzeremo una tastiera matriciale 4$\times$4 corrispondente alla tastiera esadecimale originale.
 
-Per riprodurre gli effetti sonori generati dal gioco utilizzeremo un beeper a frequenza variabile. In CHIP-8 e S-CHIP vi é un solo tipo di suono che può essere riprodotto durante tutta l'esecuzione del gioco.
-
-Infine sarà possibile aggiungere uno slot per l'alimentazione tramite due batterie \texttt{AA}.
+Per riprodurre gli effetti sonori generati dal gioco utilizzeremo un beeper a frequenza variabile. In CHIP-8 e S-CHIP vi é un solo tipo di suono che può essere riprodotto durante tutta l'esecuzione del gioco. Infine sarà possibile aggiungere uno slot per l'alimentazione tramite due batterie \texttt{AA}.
 
 \section{Componenti Software}
 
@@ -132,9 +131,11 @@ Inoltre verrà implementato un menù per la selezione del gioco all'avvio dell'e
 
 \section{Architettura Software}
 
-% \renewcommand{\umltextcolor}{black}
-% \renewcommand{\umldrawcolor}{black}
-% \renewcommand{\umlfillcolor}{white}
+\subsection{Class Diagram}
+
+\renewcommand{\umltextcolor}{black}
+\renewcommand{\umldrawcolor}{black}
+\renewcommand{\umlfillcolor}{white}
 \begin{tikzpicture}
   \begin{class}[text width=2cm]{Main}{6,0}
     \operation{+ Main()}
@@ -184,28 +185,49 @@ Inoltre verrà implementato un menù per la selezione del gioco all'avvio dell'e
     \draw [umlcd style dashed line , fill=white, ->] (0, -0.5) -- (1, -0.5) node[right,  black] {Uses};
     \end{scope}
 
-    % \begin{class}[text width=5cm]{Main}{0,0}
-  %   \attribute{- name : string}
-  %   \attribute{- age : int}
-  %   \operation{+ getName() : string}
-  %   \operation{+ getAge() : int}
-  %   \operation{+ setName(name : string)}
-  %   \operation{+ setAge(age : int)}
-  % \end{class}
-
-  % \begin{class}[text width=5cm]{Student}{8,0}
-  %   % \inherit{Person}
-  %   \attribute{- studentID : string}
-  %   \attribute{- major : string}
-  %   \operation{+ getStudentID() : string}
-  %   \operation{+ getMajor() : string}
-  %   \operation{+ setStudentID(studentID : string)}
-  %   \operation{+ setMajor(major : string)}
-  % \end{class}
-
   % \draw [ umlcd style , ->] (Main) -- node [ above , sloped , black ]{$ < <$ import $ > >$} (Student) ;
 \end{tikzpicture}
 
+\subsection{Sequence Diagram}
+
+\begin{figure}[!htbp]
+    \centering
+    \resizebox{1\textwidth}{!}{%
+        \begin{sequencediagram}
+        \newthread{main}{:Main}
+        \newinst[0.5]{menu}{:Menu}
+        \newinst[0.5]{vm}{:VM}
+        \newinst[0.5]{lcd}{:LCD}
+        \newinst[0.5]{kp}{:Keypad}
+        \newinst[0.5]{beep}{:Beeper}
+        \newinst[0.5]{sd}{:SD}
+
+        \begin{call}{main}{Menu\_Start()}{menu}{}
+            \begin{call}{menu}{SD\_GetGames()}{sd}{}
+            \end{call}
+            \begin{sdblock}{ChooseGameLoop}{}
+                \begin{call}{menu}{Keypad\_PressKey()}{kp}{}
+                \end{call}
+                \begin{call}{menu}{LCD\_DrawMenu()}{lcd}{}
+                \end{call}
+            \end{sdblock}
+            \begin{call}{menu}{SD\_LoadGame()}{sd}{}
+            \end{call}
+        \end{call}
+
+        \begin{sdblock}{MainLoop}{}
+            \begin{call}{main}{KP\_PressKey()}{kp}{}
+            \end{call}
+            \begin{call}{main}{VM\_StepCpu()}{vm}{}
+            \end{call}
+            \begin{call}{main}{Beeper\_Beep()}{beep}{}
+            \end{call}
+            \begin{call}{main}{LCD\_Draw()}{lcd}{}
+            \end{call}
+        \end{sdblock}
+        \end{sequencediagram}
+    }
+\end{figure}
 
 \section{Analisi del Consumo Energetico}
 
@@ -266,6 +288,5 @@ Possiamo stimare una durata di 40 ore di gioco.
 	\end{table}
 
 \end{center}
-
 
 \end{document}
