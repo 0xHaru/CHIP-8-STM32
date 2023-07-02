@@ -132,6 +132,81 @@ Inoltre verrà implementato un menù per la selezione del gioco all'avvio dell'e
 
 \section{Architettura Software}
 
+% \renewcommand{\umltextcolor}{black}
+% \renewcommand{\umldrawcolor}{black}
+% \renewcommand{\umlfillcolor}{white}
+\begin{tikzpicture}
+  \begin{class}[text width=2cm]{Main}{6,0}
+    \operation{+ Main()}
+  \end{class}
+
+  \begin{class}[text width=2cm]{Menu}{10,0}
+    \operation{+ Start()}
+  \end{class}
+
+  \begin{class}[text width=2cm]{VM}{0,-4}
+    \operation{+ Run()}
+  \end{class}
+
+  \begin{class}[text width=2cm]{Beeper}{3,-4}
+    \operation{+ Beep()}
+    \operation{+ Stop()}
+  \end{class}
+  
+  \begin{class}[text width=2cm]{LCDScreen}{6, -4}
+    \operation{+ Draw()}
+    \operation{+ Reset()}
+  \end{class}
+
+  \begin{class}[text width=2cm]{Keypad}{9,-4}
+    \operation{+ Read()}
+  \end{class}
+  
+  \begin{class}[text width=2cm]{SD}{12, -4}
+    \operation{+ Read()}
+  \end{class}
+
+    \draw [umlcd style dashed line , ->] (Menu) -- node [ above , sloped , black ]{} (Keypad) ;
+    \draw [umlcd style dashed line , ->] (Menu) -- node [ above , sloped , black ]{} (SD) ;
+    \draw [umlcd style dashed line , fill=white, ->] (Menu) -- node [ below  , black ]{} (LCDScreen) ;
+
+    \draw [umlcd style dashed line , ->] (Main) -- node [ above , sloped , black ]{} (Menu) ;
+    \draw [umlcd style dashed line , ->] (Main) -- node [ above , sloped , black ]{} (VM) ;
+    \draw [umlcd style dashed line , ->] (Main) -- node [ above , sloped , black ]{} (Keypad) ;
+    \draw [umlcd style dashed line , ->] (Main) -- node [ above , sloped , black ]{} (Beeper) ;
+    \draw [umlcd style dashed line , fill=white, ->] (Main) -- node [ below , sloped , black ]{} (SD) ;
+    \draw [umlcd style dashed line , fill=white, ->] (Main) -- node [ below , sloped , black ]{} (LCDScreen) ;
+
+    \begin{scope}[xshift=0cm, yshift=0cm] % Adjust the positioning of the legend
+    % Legend title
+    \node[font=\bfseries] at (0, 0) {Legend};
+    % Legend items
+    \draw [umlcd style dashed line , fill=white, ->] (0, -0.5) -- (1, -0.5) node[right,  black] {Uses};
+    \end{scope}
+
+    % \begin{class}[text width=5cm]{Main}{0,0}
+  %   \attribute{- name : string}
+  %   \attribute{- age : int}
+  %   \operation{+ getName() : string}
+  %   \operation{+ getAge() : int}
+  %   \operation{+ setName(name : string)}
+  %   \operation{+ setAge(age : int)}
+  % \end{class}
+
+  % \begin{class}[text width=5cm]{Student}{8,0}
+  %   % \inherit{Person}
+  %   \attribute{- studentID : string}
+  %   \attribute{- major : string}
+  %   \operation{+ getStudentID() : string}
+  %   \operation{+ getMajor() : string}
+  %   \operation{+ setStudentID(studentID : string)}
+  %   \operation{+ setMajor(major : string)}
+  % \end{class}
+
+  % \draw [ umlcd style , ->] (Main) -- node [ above , sloped , black ]{$ < <$ import $ > >$} (Student) ;
+\end{tikzpicture}
+
+
 \section{Analisi del Consumo Energetico}
 
 Come abbiamo gi\'a accennato in precedenza il microcontrollore durante lo sviluppo verrà alimentato tramite USB e successivamente utilizzando batterie \texttt{AA}. Le batterie hanno una tensione di 3\texttt{V} e una capacit\'a di $\sim$2500 \texttt{mA} e usandone due in serie otterremo 5000 \texttt{mA}.
@@ -191,28 +266,6 @@ Possiamo stimare una durata di 40 ore di gioco.
 	\end{table}
 
 \end{center}
-
-\section{UML test}
-\begin{tikzpicture}
-  \begin{class}[text width=5cm]{Person}{0,0}
-    \attribute{- name : string}
-    \attribute{- age : int}
-    \operation{+ getName() : string}
-    \operation{+ getAge() : int}
-    \operation{+ setName(name : string)}
-    \operation{+ setAge(age : int)}
-  \end{class}
-
-  \begin{class}[text width=5cm]{Student}{8,0}
-    \inherit{Person}
-    \attribute{- studentID : string}
-    \attribute{- major : string}
-    \operation{+ getStudentID() : string}
-    \operation{+ getMajor() : string}
-    \operation{+ setStudentID(studentID : string)}
-    \operation{+ setMajor(major : string)}
-  \end{class}
-\end{tikzpicture}
 
 
 \end{document}
