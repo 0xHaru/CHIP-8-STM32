@@ -138,45 +138,47 @@ Inoltre verrà implementato un menù per la selezione del gioco all'avvio dell'e
 \renewcommand{\umlfillcolor}{white}
 \begin{tikzpicture}
   \begin{class}[text width=2cm]{Main}{6,0}
-    \operation{+ Main()}
+    \operation{+ main()}
   \end{class}
 
   \begin{class}[text width=2cm]{Menu}{10,0}
-    \operation{+ Start()}
+    \operation{+ start()}
   \end{class}
 
   \begin{class}[text width=2cm]{VM}{0,-4}
-    \operation{+ Run()}
+    \operation{+ stepCpu()}
+    \operation{+ reset()}
   \end{class}
 
   \begin{class}[text width=2cm]{Beeper}{3,-4}
-    \operation{+ Beep()}
-    \operation{+ Stop()}
+    \operation{+ beep()}
+    \operation{+ stop()}
   \end{class}
-  
-  \begin{class}[text width=2cm]{LCDScreen}{6, -4}
-    \operation{+ Draw()}
-    \operation{+ Reset()}
+
+  \begin{class}[text width=2cm]{LCD}{6, -4}
+    \operation{+ draw()}
+    \operation{+ reset()}
   \end{class}
 
   \begin{class}[text width=2cm]{Keypad}{9,-4}
-    \operation{+ Read()}
+    \operation{+ readKey()}
   \end{class}
-  
-  \begin{class}[text width=2cm]{SD}{12, -4}
-    \operation{+ Read()}
+
+  \begin{class}[text width=2.5cm]{SD}{12, -4}
+    \operation{+ getGames()}
+    \operation{+ loadGame()}
   \end{class}
 
     \draw [umlcd style dashed line , ->] (Menu) -- node [ above , sloped , black ]{} (Keypad) ;
     \draw [umlcd style dashed line , ->] (Menu) -- node [ above , sloped , black ]{} (SD) ;
-    \draw [umlcd style dashed line , fill=white, ->] (Menu) -- node [ below  , black ]{} (LCDScreen) ;
+    \draw [umlcd style dashed line , fill=white, ->] (Menu) -- node [ below  , black ]{} (LCD) ;
 
     \draw [umlcd style dashed line , ->] (Main) -- node [ above , sloped , black ]{} (Menu) ;
     \draw [umlcd style dashed line , ->] (Main) -- node [ above , sloped , black ]{} (VM) ;
     \draw [umlcd style dashed line , ->] (Main) -- node [ above , sloped , black ]{} (Keypad) ;
     \draw [umlcd style dashed line , ->] (Main) -- node [ above , sloped , black ]{} (Beeper) ;
     \draw [umlcd style dashed line , fill=white, ->] (Main) -- node [ below , sloped , black ]{} (SD) ;
-    \draw [umlcd style dashed line , fill=white, ->] (Main) -- node [ below , sloped , black ]{} (LCDScreen) ;
+    \draw [umlcd style dashed line , fill=white, ->] (Main) -- node [ below , sloped , black ]{} (LCD) ;
 
     \begin{scope}[xshift=0cm, yshift=0cm] % Adjust the positioning of the legend
     % Legend title
@@ -202,27 +204,30 @@ Inoltre verrà implementato un menù per la selezione del gioco all'avvio dell'e
         \newinst[0.5]{beep}{:Beeper}
         \newinst[0.5]{sd}{:SD}
 
-        \begin{call}{main}{Menu\_Start()}{menu}{}
-            \begin{call}{menu}{SD\_GetGames()}{sd}{}
+        \begin{call}{main}{menu\_start()}{menu}{}
+            \begin{call}{menu}{sd\_getGames()}{sd}{}
             \end{call}
-            \begin{sdblock}{ChooseGameLoop}{}
-                \begin{call}{menu}{Keypad\_PressKey()}{kp}{}
+            \begin{sdblock}{Game Selection Loop}{}
+                \begin{call}{menu}{kp\_readKey()}{kp}{}
                 \end{call}
-                \begin{call}{menu}{LCD\_DrawMenu()}{lcd}{}
+                \begin{call}{menu}{lcd\_draw()}{lcd}{}
                 \end{call}
             \end{sdblock}
-            \begin{call}{menu}{SD\_LoadGame()}{sd}{}
+            \begin{call}{menu}{sd\_loadGame()}{sd}{}
             \end{call}
         \end{call}
 
-        \begin{sdblock}{MainLoop}{}
-            \begin{call}{main}{KP\_PressKey()}{kp}{}
+        \begin{call}{main}{vm\_reset()}{vm}{}
+        \end{call}
+
+        \begin{sdblock}{Main Loop}{}
+            \begin{call}{main}{kp\_readKey()}{kp}{}
             \end{call}
-            \begin{call}{main}{VM\_StepCpu()}{vm}{}
+            \begin{call}{main}{vm\_stepCpu()}{vm}{}
             \end{call}
-            \begin{call}{main}{Beeper\_Beep()}{beep}{}
+            \begin{call}{main}{bp\_beep()}{beep}{}
             \end{call}
-            \begin{call}{main}{LCD\_Draw()}{lcd}{}
+            \begin{call}{main}{lcd\_draw()}{lcd}{}
             \end{call}
         \end{sdblock}
         \end{sequencediagram}
