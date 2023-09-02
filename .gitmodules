@@ -1,0 +1,3 @@
+[submodule "CHIP-8"]
+	path = CHIP-8
+	url = https://github.com/0xHaru/CHIP-8
